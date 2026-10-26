@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
@@ -1690,44 +1690,80 @@ function openSellModal(id, currentSell, currentShip, currentSoldDate) {
 function closeSellModal() { document.getElementById("sellModal").style.display = "none"; }
 
 function handleSellSubmit(event) {
+
   event.preventDefault();
+
   const id = document.getElementById("sellDiscId").value;
   const sellPrice = Number(document.getElementById("sellPriceInput").value);
-const shipCost =
-  Number(
+
+  const shipCost =
+    Number(
+      document.getElementById(
+        "shipCostInput"
+      ).value || 0
+    );
+
+  const soldDate =
     document.getElementById(
-      "shipCostInput"
-    ).value || 0
-  );
-  const soldDate = document.getElementById("soldDateInput").value;
+      "soldDateInput"
+    ).value;
 
   fetch(`${SUPABASE_URL}/rest/v1/games_inventory?id=eq.${id}`, {
     method: "PATCH",
-    headers: { apikey: SUPABASE_KEY, "Content-Type": "application/json", Prefer: "return=representation" },
-    body: JSON.stringify({ status: "已售出", selling_price: sellPrice, shipping_cost: shipCost, sold_date: soldDate })
+    headers: {
+      apikey: SUPABASE_KEY,
+      "Content-Type": "application/json",
+      Prefer: "return=representation"
+    },
+    body: JSON.stringify({
+      status: "已售出",
+      selling_price: sellPrice,
+      shipping_cost: shipCost,
+      sold_date: soldDate
+    })
   })
+
   .then(res => res.json())
+
   .then(() => {
-alert("✅ 售出状态更新成功！");
+
+    alert("✅ 售出状态更新成功！");
 
     closeSellModal();
 
-fetch(`${SUPABASE_URL}/rest/v1/games_inventory?select=*`, {
-  headers: { apikey: SUPABASE_KEY }
-})
-.then(res => res.json())
-.then(data => {
+    fetch(
+      `${SUPABASE_URL}/rest/v1/games_inventory?select=*`,
+      {
+        headers: {
+          apikey: SUPABASE_KEY
+        }
+      }
+    )
 
-  rawDiscsData = data || [];
+    .then(res => res.json())
 
-  renderDashboardAndList();
-  renderAnalytics();
+    .then(data => {
 
-  openGameDetailModal(currentGameName);
+      rawDiscsData = data || [];
+
+      renderDashboardAndList();
+      renderAnalytics();
+
+      openGameDetailModal(currentGameName);
+
+    });
+
   })
-  .catch(err => { alert("更新失败"); console.error(err); });
-}
 
+  .catch(err => {
+
+    alert("更新失败");
+
+    console.error(err);
+
+  });
+
+}
 function deleteDisc(id, gameName) {
 
   if (!confirm("确定要删除这条光盘记录吗？"))
@@ -1759,14 +1795,17 @@ fetch(`${SUPABASE_URL}/rest/v1/games_inventory?select=*`, {
 
   openGameDetailModal(gameName);
 
-  })
-  .catch(err => {
+});
 
-    alert("删除失败");
+})
+.catch(err => {
 
-    console.error(err);
+  alert("删除失败");
 
-  });
+  console.error(err);
+
+});
+
 }
 function sortGamesBy(type, btnElement) {
 
