@@ -1,0 +1,1849 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>六六游戏账本</title>
+  <style>
+    body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background: #f8f9fa;
+  padding: 12px;
+  margin: 0;
+  color: #2d3436;
+  -webkit-tap-highlight-color: transparent;
+}
+
+h1 {
+  font-size: 22px;
+  margin: 18px 0 12px 0;
+  color: #2d3436;
+}
+
+#summary {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.summary-card {
+  background: white;
+  border-radius: 12px;
+  padding: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.summary-title {
+  font-size: 11px;
+  color: #636e72;
+  margin-bottom: 4px;
+}
+
+.summary-value {
+  font-size: 18px;
+  font-weight: bold;
+  color: #2d3436;
+}
+
+.filter-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.filter-tabs {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+}
+
+.tab-btn {
+  flex: 1;
+  padding: 10px 0;
+  text-align: center;
+  border: 1px solid #dfe6e9;
+  background: white;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: bold;
+  color: #636e72;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.tab-btn.active {
+  background: #6c5ce7;
+  color: white;
+  border-color: #6c5ce7;
+  box-shadow: 0 2px 8px rgba(108, 92, 231, 0.3);
+}
+
+.btn-analytics {
+  background: #2d3436;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: bold;
+  cursor: pointer;
+  width: 100%;
+}
+
+.analytics-panel {
+  background: white;
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+}
+
+.analytics-header {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid #dfe6e9;
+  padding-bottom: 10px;
+}
+
+.analytics-header h2 {
+  margin: 0;
+  font-size: 15px;
+}
+
+.time-dimension-tabs {
+  display: flex;
+  gap: 6px;
+}
+
+.time-btn {
+  flex: 1;
+  padding: 8px 0;
+  border: 1px solid #dfe6e9;
+  background: #f8f9fa;
+  border-radius: 8px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.time-btn.active {
+  background: #00b894;
+  color: white;
+  border-color: #00b894;
+}
+
+.custom-date-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+  background: #f8f9fa;
+  padding: 10px;
+  border-radius: 10px;
+  font-size: 12px;
+}
+
+.date-input {
+  padding: 7px;
+  border: 1px solid #dfe6e9;
+  border-radius: 6px;
+  outline: none;
+  flex: 1;
+  min-width: 120px;
+}
+
+.time-breakdown-grid {
+  display:flex;
+  overflow-x:auto;
+  gap:12px;
+
+  max-height:none;
+  overflow-y:hidden;
+}
+
+.time-card {
+  background: #f8f9fa;
+  border-left: 3px solid #00b894;
+  border-radius: 10px;
+  padding: 10px;
+  min-width:180px;
+  flex-shrink:0;
+}
+
+.time-card-date {
+  font-size: 12px;
+  color: #2d3436;
+  font-weight: 600;
+}
+
+.time-card-profit {
+  font-size: 18px;
+  font-weight: 700;
+  margin-top: 6px;
+}
+
+.time-card-sub {
+  font-size: 11px;
+  color: #636e72;
+  margin-top: 4px;
+  font-weight: 500;
+}
+
+.insights-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.insight-card {
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.insight-card h3 {
+  margin: 0 0 8px 0;
+  font-size: 13px;
+}
+
+.rank-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  margin-bottom: 6px;
+  padding-bottom: 6px;
+  border-bottom: 1px dashed #dfe6e9;
+}
+
+.rank-item:last-child {
+  border-bottom: none;
+}
+
+#result {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: white;
+  border-radius: 16px;
+  padding: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.card:active {
+  transform: scale(0.99);
+}
+
+.card-left {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+
+  flex: 1;
+  min-width: 0;
+}
+.cover {
+  width: 80px;
+  height: 110px;
+  border-radius: 12px;
+  object-fit: cover;
+  background: #dfe6e9;
+  border: 1px solid #dfe6e9;
+  flex-shrink: 0;
+}
+
+
+.profit-label {
+  font-size: 11px;
+  color: #636e72;
+  font-weight: 600;
+}
+.total-qty {
+  margin-top: 6px;
+  font-size: 11px;
+  color: #636e72;
+  font-weight: 600;
+}
+
+.details .profit-text {
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.card-right {
+  width: 175px;
+
+  flex-shrink: 0;
+
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+
+  gap: 6px;
+
+  background: #f8f9fa;
+
+  padding: 8px;
+
+  border-radius: 10px;
+
+  border-left: 3px solid #6c5ce7;
+}
+
+.details {
+  flex: 1;
+  min-width: 0;
+}
+
+.details h2 {
+  margin: 0 0 6px 0;
+
+  font-size: 14px;
+  font-weight: 700;
+
+  line-height: 1.3;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  width: 100%;
+}
+.stat-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.stat-label {
+  font-size: 10px;
+  color: #636e72;
+  font-weight: 600;
+}
+.stat-val {
+  font-size: 13px;
+  font-weight: 700;
+  color: #2d3436;
+}
+.floating-btns {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 99;
+}
+
+.float-btn {
+  width: 52px;
+  height: 52px;
+  border: none;
+  border-radius: 50%;
+  color: white;
+  background: #6c5ce7;
+  font-size: 26px;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.modal-content {
+  width: 92%;
+  max-width: 500px;
+  max-height: 85vh;
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.sell-modal-content {
+  max-width: 360px;
+}
+
+.modal-header {
+  padding: 14px 16px;
+  border-bottom: 1px solid #dfe6e9;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 16px;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+}
+
+.modal-body {
+  padding: 16px;
+  overflow-y: auto;
+}
+
+.disc-item {
+  background: #f8f9fa;
+  border: 1px solid #dfe6e9;
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 10px;
+}
+
+.disc-info {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px;
+  margin-bottom: 10px;
+  font-size: 12px;
+}
+
+.disc-actions {
+  display: flex;
+  gap: 8px;
+  border-top: 1px solid #dfe6e9;
+  padding-top: 8px;
+}
+
+.disc-actions button {
+  flex: 1;
+  padding: 8px 0;
+  border: none;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.btn-sell {
+  background: #00b894;
+  color: white;
+}
+
+.btn-delete {
+  background: #d63031;
+  color: white;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.form-group input,
+.form-group textarea {
+  padding: 10px;
+  border: 1px solid #dfe6e9;
+  border-radius: 8px;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.btn-cancel {
+  padding: 10px 14px;
+  border: 1px solid #dfe6e9;
+  background: white;
+  border-radius: 8px;
+}
+
+.btn-submit {
+  padding: 10px 16px;
+  border: none;
+  background: #00b894;
+  color: white;
+  font-weight: bold;
+  border-radius: 8px;
+}
+
+@media (max-width: 480px) {
+
+  h1 {
+    margin-top: 20px;
+    font-size: 20px;
+  }
+
+.card {
+  flex-direction: row;
+  align-items: center;
+}
+.card-left {
+  flex: 1;
+}
+.card-right {
+  width: 175px;
+
+  flex-shrink: 0;
+
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+
+  gap: 6px;
+
+  background: #f8f9fa;
+
+  padding: 8px;
+
+  border-radius: 10px;
+
+  border-left: 3px solid #6c5ce7;
+}
+  .date-input {
+    width: 100%;
+    min-width: unset;
+  }
+
+  .floating-btns {
+    right: 16px;
+    bottom: 16px;
+  }
+}
+.qty-value {
+  color:#000;
+  font-weight:800;
+  font-size: 13px;
+}
+
+.sort-bar{
+  display:flex;
+  gap:8px;
+  overflow-x:auto;
+  padding-bottom:4px;
+}
+
+.sort-btn{
+  border:none;
+  background:#f1f3f5;
+  padding:8px 12px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:600;
+  white-space:nowrap;
+  cursor:pointer;
+  flex-shrink:0;
+}
+
+.sort-btn.active{
+  background:#6c5ce7;
+  color:#fff;
+}
+
+.sort-label{
+  font-size:12px;
+  color:#636e72;
+  font-weight:600;
+  display:flex;
+  align-items:center;
+  white-space:nowrap;
+}
+  </style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+<body>
+
+ <div id="app">
+  <h1>🎮 六六游戏账本</h1>
+
+  <div id="summary">加载统计...</div>
+
+  <div class="filter-bar">
+    <div class="filter-tabs">
+      <button class="tab-btn active"
+              onclick="switchTab('in_stock', this)">
+        📦 仅有库存
+      </button>
+
+      <button class="tab-btn"
+              onclick="switchTab('all', this)">
+        📚 全部游戏
+      </button>
+    </div>
+<div class="sort-bar">
+
+  <span class="sort-label">
+    排序方式:
+  </span>
+
+  <button class="sort-btn active"
+          onclick="sortGamesBy('profit', this)">
+    💰 利润
+  </button>
+
+  <button class="sort-btn"
+          onclick="sortGamesBy('total_qty', this)">
+    📀 总张数
+  </button>
+
+  <button class="sort-btn"
+          onclick="sortGamesBy('stock_qty', this)">
+    📦 库存
+  </button>
+
+  <button class="sort-btn"
+          onclick="sortGamesBy('cost', this)">
+    💸 库存成本
+  </button>
+
+</div>   
+
+ <button class="btn-analytics"
+            onclick="toggleAnalytics()">
+      📊 展开/收起 财务分析报表
+    </button>
+  </div>
+
+  <div id="analyticsPanel"
+       class="analytics-panel"
+       style="display:none;">
+
+    <div class="analytics-header">
+      <h2>📈 财务与销量分析</h2>
+
+      <div class="time-dimension-tabs">
+        <button class="time-btn active"
+                onclick="switchTimeDimension('month', this)">
+          按月
+        </button>
+
+        <button class="time-btn"
+                onclick="switchTimeDimension('year', this)">
+          按年
+        </button>
+
+        <button class="time-btn"
+                onclick="switchTimeDimension('day', this)">
+          按日
+        </button>
+      </div>
+    </div>
+
+    <div class="custom-date-bar">
+
+      <button class="time-btn"
+              onclick="showCurrentMonth()">
+        本月
+      </button>
+
+      <button class="time-btn"
+              onclick="showCurrentYear()">
+        本年
+      </button>
+
+<button class="time-btn"
+          onclick="showAllData()">
+    全部
+  </button>
+      <input type="date"
+             id="customStartDate"
+             class="date-input">
+
+      <span>至</span>
+
+      <input type="date"
+             id="customEndDate"
+             class="date-input">
+
+      <button class="time-btn active"
+              onclick="applyCustomDateRange()">
+        查询
+      </button>
+
+    </div>
+
+    <div id="timeBreakdownList"
+         class="time-breakdown-grid">
+    </div>
+
+    <div class="insights-grid">
+
+      <div class="insight-card">
+        <h3>👑 最赚钱游戏 Top 3</h3>
+        <div id="topProfitGames">
+          加载中...
+        </div>
+      </div>
+
+      <div class="insight-card">
+        <h3>🔥 最畅销游戏 Top 3</h3>
+        <div id="topSoldGames">
+          加载中...
+        </div>
+      </div>
+
+      <div class="insight-card">
+        <h3>⚡ 运营效率指标</h3>
+        <div id="businessMetrics">
+          加载中...
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <div id="result">
+    加载中...
+  </div>
+</div>
+
+<div class="floating-btns">
+
+  <button class="float-btn"
+          id="addBtn"
+          onclick="handleAddGame()"
+          title="新增游戏">
+    +
+  </button>
+
+</div>
+
+<div id="detailModal"
+     class="modal-overlay"
+     style="display:none;">
+
+  <div class="modal-content">
+
+    <div class="modal-header">
+
+      <h2 id="modalTitle">
+        游戏明细管理
+      </h2>
+
+      <button class="close-btn"
+              onclick="closeModal()">
+        ×
+      </button>
+
+    </div>
+
+    <div id="modalBody"
+         class="modal-body">
+      加载中...
+    </div>
+
+  </div>
+
+</div>
+
+<div id="sellModal"
+     class="modal-overlay"
+     style="display:none;">
+
+  <div class="modal-content sell-modal-content">
+
+    <div class="modal-header">
+
+      <h2>
+        🏷️ 标记售出明细
+      </h2>
+
+      <button class="close-btn"
+              onclick="closeSellModal()">
+        ×
+      </button>
+
+    </div>
+
+    <div class="modal-body">
+
+      <form id="sellForm"
+            onsubmit="handleSellSubmit(event)">
+
+        <input type="hidden"
+               id="sellDiscId">
+
+        <div class="form-group">
+          <label>卖出价格 (¥)</label>
+
+          <input type="number"
+                 id="sellPriceInput"
+                 step="0.01"
+                 required>
+        </div>
+
+        <div class="form-group">
+          <label>运费 (¥)</label>
+
+          <input type="number"
+                 id="shipCostInput"
+                 step="0.01"
+                 value="0">
+        </div>
+
+        <div class="form-group">
+          <label>售出日期</label>
+
+          <input type="date"
+                 id="soldDateInput"
+                 required>
+        </div>
+
+        <div class="form-actions">
+
+          <button type="button"
+                  class="btn-cancel"
+                  onclick="closeSellModal()">
+            取消
+          </button>
+
+          <button type="submit"
+                  class="btn-submit">
+            确认售出
+          </button>
+
+        </div>
+
+      </form>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+
+
+
+
+
+  <script>
+const SUPABASE_URL ="https://kjsxeznhnhlfoyozffjf.supabase.co";
+const SUPABASE_KEY = "sb_publishable_q4JWDPQly0ijCl43f2ODEw_7-vcNUIq";
+let rawDiscsData = [];
+let currentFilter = "in_stock";
+let currentSort = "stock_qty";
+let currentTimeDimension = "month";
+let analyticsStartDate = null;
+let analyticsEndDate = null;
+let salesChart = null;
+let currentGameName = "";
+function formatMoney(num) {
+  return Number(num || 0).toLocaleString(
+    "zh-CN",
+    {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }
+  );
+}
+
+// 从 Supabase 云端加载游戏数据（封面与评分已由云函数自动在后台抓取固化）
+function loadGames() {
+  fetch(`${SUPABASE_URL}/rest/v1/games_inventory?select=*`, {
+    headers: { apikey: SUPABASE_KEY }
+  })
+  .then(res => res.json())
+  .then(data => {
+    rawDiscsData = data || [];
+    renderDashboardAndList();
+    renderAnalytics();
+  })
+  .catch(error => {
+    console.error("加载数据失败:", error);
+    document.getElementById("result").innerHTML = `<div style="text-align: center; color: #d63031; padding: 40px 0;">网络加载失败，请检查网络</div>`;
+  });
+}
+
+function renderDashboardAndList() {
+  const gamesMap = {};
+  rawDiscsData.forEach(disc => {
+    const name =
+  (disc.game_name || "未知游戏")
+    .trim();
+
+    if (!gamesMap[name]) {
+      gamesMap[name] = {
+        game_name: name,
+        // 直接读取数据库中由云函数自动抓取并持久化保存的封面与评分
+        cover_url: disc.cover_url || "",
+        total_qty: 0,
+        sold_qty: 0,
+        transit_qty: 0,
+        stock_qty: 0,
+        total_profit: 0,
+        total_cost: 0,
+        discs: []
+      };
+    }
+    const g = gamesMap[name];
+    g.discs.push(disc);
+    if (disc.cover_url) g.cover_url = disc.cover_url;
+
+    const buyPrice = Number(disc.purchase_price || 0);
+    const sellPrice = Number(disc.selling_price || 0);
+    const shipCost = Number(disc.shipping_cost || 0);
+
+    if (disc.status === "已售出") {
+      g.sold_qty += 1;
+      const itemProfit = disc.profit !== null && disc.profit !== undefined ? Number(disc.profit) : (sellPrice - buyPrice - shipCost);
+      g.total_profit += itemProfit;
+    } else {
+  g.total_qty += 1;
+  g.total_cost += buyPrice;
+  if (disc.status === "运输中") {
+    g.transit_qty += 1;
+  } else {
+    g.stock_qty += 1;
+  }
+}
+    
+    
+  });
+
+  const gamesList = Object.values(gamesMap);
+  const filteredGames = gamesList.filter(g => {
+    if (currentFilter === "in_stock") return g.total_qty > 0;
+    return true;
+  });
+filteredGames.sort((a,b)=>{
+
+  const aHistorical =
+    a.discs?.some(x => x.is_historical);
+
+  const bHistorical =
+    b.discs?.some(x => x.is_historical);
+
+  if (aHistorical) return 1;
+  if (bHistorical) return -1;
+
+  switch(currentSort){
+
+    case "total_qty":
+      return (
+        (b.total_qty + b.sold_qty)
+        -
+        (a.total_qty + a.sold_qty)
+      );
+
+case "stock_qty":
+  if (b.total_qty !== a.total_qty) {
+    return b.total_qty - a.total_qty;
+  }
+  return b.total_profit - a.total_profit;
+    case "cost":
+      return b.total_cost - a.total_cost;
+
+    case "profit":
+    default:
+      return b.total_profit - a.total_profit;
+  }
+});
+let grandTotalProfit = 0;
+let totalTitles = 0;
+let totalCopies = 0;
+let inventoryTitles = 0;
+let inventoryCopies = 0;
+let inventoryCost = 0;
+gamesList.forEach(g => {
+  grandTotalProfit += g.total_profit;
+  const historicalDisc =
+    g.discs.find(x => x.is_historical);
+  if (historicalDisc) {
+    totalTitles +=
+      Number(historicalDisc.total_titles || 0);
+    totalCopies +=
+      Number(historicalDisc.total_copies || 0);
+  } else {
+    totalTitles += 1;
+    totalCopies +=
+      g.total_qty +
+      g.sold_qty;
+    if (g.total_qty > 0) {
+      inventoryTitles += 1;
+    }
+    inventoryCopies += g.total_qty;
+    inventoryCost += g.total_cost;
+  }
+});
+
+      document.getElementById("summary").innerHTML = `
+  <div class="summary-card">
+    <div class="summary-title">总利润</div>
+    <div class="summary-value"
+         style="color:${
+           grandTotalProfit >= 0
+             ? '#00b894'
+             : '#d63031'
+         };">
+      ¥${formatMoney(grandTotalProfit)}
+    </div>
+  </div>
+  <div class="summary-card">
+    <div class="summary-title">当前库存</div>
+    <div class="summary-value">
+      ${inventoryCopies}张 / ${inventoryTitles}款
+    </div>
+  </div>
+  <div class="summary-card">
+    <div class="summary-title">库存成本</div>
+    <div class="summary-value">
+      ¥${formatMoney(inventoryCost)}
+    </div>
+  </div>
+  <div class="summary-card">
+    <div class="summary-title">游戏总数</div>
+    <div class="summary-value">
+      ${totalCopies}张 / ${totalTitles}款
+    </div>
+  </div>
+`;
+  let html = "";
+  filteredGames.forEach(g => {
+const historicalDisc =
+  g.discs.find(x => x.is_historical);
+const isHistorical =
+  historicalDisc?.is_historical;
+
+    const profitColor = g.total_profit > 0 ? "#00b894" : g.total_profit < 0 ? "#d63031" : "#636e72";
+    const coverUrl =
+  g.cover_url &&
+  g.cover_url.trim()
+    ? g.cover_url
+: "";
+    const avgCost = g.total_qty > 0 ? Math.round(g.total_cost / g.total_qty) : 0;
+if (isHistorical) {
+html += `
+  <div class="card" onclick="openGameDetailModal('${g.game_name}')">
+    <div class="card-left">
+      <img class="cover" src="${coverUrl}" alt="封面">
+      <div class="details">
+        <h2>${g.game_name}</h2>
+        <div class="profit-box">
+          <span class="profit-label">
+            总利润
+          </span>
+          <span
+            class="profit-text"
+            style="color:${profitColor};">
+            ¥${formatMoney(g.total_profit)}
+          </span>
+          <div class="total-qty">
+总数量
+<span class="qty-value">
+${historicalDisc.total_copies}张
+  </span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-right">
+      <div class="stat-item">
+        <span class="stat-label">
+          历史总数
+        </span>
+        <span class="stat-val">
+          ${historicalDisc.total_copies}张 /
+          ${historicalDisc.total_titles}款
+        </span>
+      </div>
+    </div>
+  </div>
+  `;
+  return;
+}
+
+    // 完美还原你截图中的经典卡片 UI 布局
+    html += `
+      <div class="card" onclick="openGameDetailModal('${g.game_name}')">
+        <div class="card-left">
+          <img class="cover" src="${coverUrl}" alt="封面">
+<div class="details">
+  <h2>${g.game_name}</h2>
+  <div class="profit-box">
+    <span class="profit-label">
+      总利润
+    </span>
+    <span
+      class="profit-text"
+      style="color:${profitColor};">
+      ¥${formatMoney(g.total_profit)}
+    </span>
+    <div class="total-qty">
+      总数量
+  <span class="qty-value">
+    ${g.total_qty + g.sold_qty}张
+  </span>
+    </div>
+  </div>
+</div>
+        </div>
+        <div class="card-right">
+          <div class="stat-item"><span class="stat-label">已售出</span><span class="stat-val">${g.sold_qty} 张</span></div>
+          <div class="stat-item"><span class="stat-label">现有库存</span><span class="stat-val">${g.total_qty} 张</span></div>
+          <div class="stat-item"><span class="stat-label">库存均价</span><span class="stat-val"> ¥${formatMoney(avgCost)}</span></div>
+          <div class="stat-item">
+  <span class="stat-label">库存成本</span>
+  <span class="stat-val">
+    ¥${formatMoney(g.total_cost)}
+
+  </span>
+</div>
+        </div>
+      </div>
+    `;
+  });
+  document.getElementById("result").innerHTML = html || `<div style="text-align: center; color: #b2bec3; padding: 40px 0;">暂无对应游戏记录</div>`;
+}
+
+function renderAnalytics() {
+  let soldDiscs = rawDiscsData.filter(d => d.status === "已售出" && d.sold_date);
+if (
+  analyticsStartDate &&
+  analyticsEndDate
+) {
+  soldDiscs =
+    soldDiscs.filter(
+      d =>
+        d.sold_date >= analyticsStartDate &&
+        d.sold_date <= analyticsEndDate
+    );
+}
+
+  if (currentTimeDimension === "custom") {
+    const startDate = document.getElementById("customStartDate").value;
+    const endDate = document.getElementById("customEndDate").value;
+    if (startDate && endDate) soldDiscs = soldDiscs.filter(d => d.sold_date >= startDate && d.sold_date <= endDate);
+  }
+
+  const timeMap = {};
+  soldDiscs.forEach(disc => {
+    let key = disc.sold_date;
+    if (currentTimeDimension === "month") key = disc.sold_date.substring(0, 7);
+    else if (currentTimeDimension === "year") key = disc.sold_date.substring(0, 4);
+    else if (currentTimeDimension === "custom") key = "自定义区间汇总";
+
+    if (!timeMap[key]) timeMap[key] = { profit: 0, count: 0, sales: 0 };
+    const buyPrice = Number(disc.purchase_price || 0);
+    const sellPrice = Number(disc.selling_price || 0);
+    const shipCost = Number(disc.shipping_cost || 0);
+    const profit = disc.profit !== null && disc.profit !== undefined ? Number(disc.profit) : (sellPrice - buyPrice - shipCost);
+
+timeMap[key].profit += profit;
+timeMap[key].sales += sellPrice;
+if (disc.is_historical) {
+  timeMap[key].count +=
+    Number(disc.total_copies || 0);
+} else {
+  timeMap[key].count += 1;
+}
+  });
+
+  const sortedTimes = Object.keys(timeMap).sort().reverse();
+  let timeHtml = "";
+  sortedTimes.forEach(t => {
+    const item = timeMap[t];
+    timeHtml += `
+      <div class="time-card">
+        <div class="time-card-date">${t}</div>
+        <div class="time-card-profit" style="color: ${item.profit >= 0 ? '#00b894' : '#d63031'};"> ¥${formatMoney(item.profit)}
+</div>
+        <div class="time-card-sub">售出 ${item.count} 张 / 销售额 ¥${formatMoney(item.sales)}
+</div>
+      </div>
+    `;
+  });
+  document.getElementById("timeBreakdownList").innerHTML = timeHtml || `<div class="empty-tip">该时间范围内暂无已售数据</div>`;
+
+  const gameStats = {};
+  soldDiscs.forEach(disc => {
+const name =
+  (disc.game_name || "未知游戏")
+    .trim();
+    if (!gameStats[name]) gameStats[name] = { profit: 0, sold: 0 };
+    gameStats[name].sold += 1;
+    const buyPrice = Number(disc.purchase_price || 0);
+    const sellPrice = Number(disc.selling_price || 0);
+    const shipCost = Number(disc.shipping_cost || 0);
+    const profit = disc.profit !== null && disc.profit !== undefined ? Number(disc.profit) : (sellPrice - buyPrice - shipCost);
+    gameStats[name].profit += profit;
+  });
+
+  const statsList = Object.keys(gameStats).map(k => ({ name: k, ...gameStats[k] }));
+const rankingStats =
+  statsList.filter(
+    x => x.name !== "历史游戏"
+  );
+
+  const topProfit = [...rankingStats].sort((a, b) => b.profit - a.profit).slice(0, 3);
+  let profitRankHtml = topProfit.length > 0 ? topProfit.map((item, idx) => `
+    <div class="rank-item">
+      <span>${idx + 1}. ${item.name}</span>
+      <strong style="color: ${item.profit >= 0 ? '#00b894' : '#d63031'};"> ¥${formatMoney(item.profit)}
+</strong>
+    </div>
+  `).join('') : `<div class="empty-tip" style="padding: 5px 0;">暂无销售数据</div>`;
+  document.getElementById("topProfitGames").innerHTML = profitRankHtml;
+
+  const topSold = [...rankingStats].sort((a, b) => b.sold - a.sold).slice(0, 3);
+  let soldRankHtml = topSold.length > 0 ? topSold.map((item, idx) => `
+    <div class="rank-item">
+      <span>${idx + 1}. ${item.name}</span>
+      <strong>${item.sold} 张</strong>
+    </div>
+  `).join('') : `<div class="empty-tip" style="padding: 5px 0;">暂无销售数据</div>`;
+  document.getElementById("topSoldGames").innerHTML = soldRankHtml;
+
+  let metricsHtml = "";
+  if (soldDiscs.length > 0) {
+    let totalSellPriceSum = 0, totalCostSum = 0;
+    soldDiscs.forEach(d => {
+      totalSellPriceSum += Number(d.selling_price || 0);
+      totalCostSum += Number(d.purchase_price || 0) + Number(d.shipping_cost || 0);
+});
+const avgSalePrice =
+  totalSellPriceSum / soldDiscs.length;
+
+    const avgProfitPerDisc = ((totalSellPriceSum - totalCostSum) / soldDiscs.length).toFixed(1);
+    metricsHtml = `
+      <div class="rank-item"><span>区间单盘平均净利润</span><strong style="color: #00b894;">¥${avgProfitPerDisc}</strong></div>
+      <div class="rank-item"><span>区间已售出盘数</span><strong>${soldDiscs.length} 张</strong></div>
+<div class="rank-item">
+  <span>平均售价</span>
+  <strong style="color:#0984e3;">
+    ¥${formatMoney(avgSalePrice)}
+  </strong>
+</div>
+
+    `;
+  } else {
+    metricsHtml = `<div class="empty-tip" style="padding: 5px 0;">暂无销售数据</div>`;
+  }
+  document.getElementById("businessMetrics").innerHTML = metricsHtml;
+//renderSalesChart(timeMap);
+}
+function renderSalesChart(timeMap) {
+  const canvas =
+    document.getElementById("salesChart");
+  if (!canvas) {
+    console.log("salesChart not found");
+    return;
+  }
+  const ctx = canvas.getContext("2d");
+  const labels =
+    Object.keys(timeMap).sort();
+  const data =
+    labels.map(
+      x => timeMap[x].sales
+    );
+  if (salesChart) {
+    salesChart.destroy();
+  }
+  salesChart = new Chart(ctx, {
+    type: "bar",
+    data: {
+      labels,
+      datasets: [{
+        label: "销售额",
+        data,
+        backgroundColor: "#6c5ce7"
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false
+    }
+  });
+}
+
+function toggleAnalytics() {
+  const panel = document.getElementById("analyticsPanel");
+  panel.style.display = panel.style.display === "none" ? "block" : "none";
+}
+
+function switchTimeDimension(dim, btnElement) {
+  currentTimeDimension = dim;
+  document.querySelectorAll('.time-btn').forEach(btn => btn.classList.remove('active'));
+  btnElement.classList.add('active');
+  renderAnalytics();
+}
+
+function applyCustomDateRange() {
+  analyticsStartDate =
+    document.getElementById(
+      "customStartDate"
+    ).value;
+  analyticsEndDate =
+    document.getElementById(
+      "customEndDate"
+    ).value;
+  if (
+    !analyticsStartDate ||
+    !analyticsEndDate
+  ) {
+    alert("请选择完整日期");
+    return;
+  }
+  renderAnalytics();
+}
+
+function handleAddGame() {
+  const gameName =
+    prompt("请输入游戏名称")
+      ?.trim();
+  if (!gameName) return;
+  const purchasePrice =
+    prompt("请输入买入价");
+  if (!purchasePrice) return;
+  fetch(`${SUPABASE_URL}/rest/v1/games_inventory`, {
+    method: "POST",
+    headers: {
+      apikey: SUPABASE_KEY,
+      "Content-Type": "application/json",
+      Prefer: "return=representation"
+    },
+    body: JSON.stringify({
+      game_name: gameName,
+      status: "已入库",
+      purchase_price: Number(purchasePrice)
+    })
+  })
+  .then(res => res.json())
+  .then(() => {
+    alert("保存成功");
+    loadGames();
+  })
+  .catch(error => {
+    alert("保存失败");
+    console.error(error);
+  });
+}
+
+function openGameDetailModal(gameName) {
+ currentGameName = gameName;
+  document.getElementById("modalTitle").innerText = `《${gameName}》管理与封面`;
+  document.getElementById("detailModal").style.display = "flex";
+  
+const discs = rawDiscsData
+  .filter(d => d.game_name === gameName)
+  .sort((a, b) => {
+
+    const aSold = a.status === "已售出";
+    const bSold = b.status === "已售出";
+
+    // 库存永远在前
+    if (!aSold && bSold) return -1;
+    if (aSold && !bSold) return 1;
+
+    // 库存：最老库存排最前
+    if (!aSold && !bSold) {
+
+return new Date(
+  b.created_at || 0
+) - new Date(
+  a.created_at || 0
+);
+
+    }
+
+    // 已售出：最新售出排最前
+    return new Date(
+      b.sold_date || 0
+    ) - new Date(
+      a.sold_date || 0
+    );
+
+  });
+
+const currentCover =
+  discs.find(
+    d =>
+      d.cover_url &&
+      d.cover_url.trim()
+  )?.cover_url || "";
+  let bodyHtml = `
+   <div style="
+  background:#f8f9fa;
+  padding:12px;
+  border-radius:12px;
+  margin-bottom:14px;
+  display:flex;
+  gap:12px;
+  align-items:flex-start;
+">
+
+  <img
+    src="${currentCover}"
+    style="
+      width:90px;
+      height:120px;
+      object-fit:cover;
+      border-radius:8px;
+      flex-shrink:0;
+    "
+    alt="封面"
+  >
+
+<div style="
+   width:140px;
+  display:flex;
+  flex-direction:column;
+">
+
+    <div style="
+      font-size:13px;
+      font-weight:bold;
+      margin-bottom:6px;
+    ">
+      🖼️ 修改封面
+    </div>
+
+<input
+  type="file"
+  id="localCoverFile"
+  accept="image/*"
+  style="display:none;"
+  onchange="
+    document.getElementById('fileNameText').innerText =
+    this.files.length
+      ? this.files[0].name
+      : '未选择图片';
+  "
+>
+
+<button
+  type="button"
+  onclick="document.getElementById('localCoverFile').click()"
+  style="
+    width:100%;
+    height:34px;
+    border:none;
+    border-radius:6px;
+    background:#f1f3f5;
+    font-size:11px;
+    font-weight:bold;
+    cursor:pointer;
+    margin-bottom:6px;
+  ">
+  📷 选择封面
+</button>
+
+<div
+  id="fileNameText"
+  style="
+    font-size:11px;
+    color:#636e72;
+    min-height:16px;
+    margin-bottom:12px;
+    word-break:break-all;
+  ">
+  未选择图片
+</div>
+
+    <button
+      onclick="uploadLocalCover('${gameName}')"
+      style="
+        width:100%;
+        background:#00b894;
+        color:white;
+        border:none;
+  height:34px;
+        padding:6px;
+        border-radius:6px;
+        font-size:11px;
+        font-weight:bold;
+      ">
+      上传
+    </button>
+
+  </div>
+
+<div style="
+  width:120px;
+  padding-left:12px;
+  margin-left:4px;
+  border-left:1px solid #dfe6e9;
+
+  display:flex;
+  flex-direction:column;
+
+">
+
+    <div style="
+      font-size:13px;
+      font-weight:bold;
+      margin-bottom:6px;
+    ">
+      📦 新增库存
+    </div>
+
+    <input
+      id="newStockPrice"
+      type="number"
+      placeholder="买入价"
+      style="
+        width:100%;
+        box-sizing:border-box;
+height:34px;
+        padding:6px;
+        border:1px solid #dfe6e9;
+        border-radius:6px;
+        margin-bottom:6px;
+      "
+    >
+<div style="
+  height:28px;
+"></div>
+    <button
+      onclick="addStock('${gameName}')"
+      style="
+        width:100%;
+        background:#6c5ce7;
+        color:white;
+        border:none;
+height:34px;
+        padding:6px;
+        border-radius:6px;
+        font-size:11px;
+        font-weight:bold;
+      ">
+      新增
+    </button>
+
+  </div>
+
+      </div>
+
+    <div style="font-size: 13px; font-weight: bold; margin-bottom: 8px;">📦 该游戏光盘明细列表：</div>
+  `;
+
+  if (!discs || discs.length === 0) {
+    bodyHtml += "<p>暂无具体光盘记录</p>";
+  } else {
+    discs.forEach(disc => {
+      const isSold = disc.status === '已售出';
+      const statusColor = isSold ? '#00b894' : '#0984e3';
+      const buyPrice = Number(disc.purchase_price || 0);
+      const sellPrice = Number(disc.selling_price || 0);
+      const shipCost = Number(disc.shipping_cost || 0);
+      const profit = isSold ? (disc.profit !== null && disc.profit !== undefined ? disc.profit : (sellPrice - buyPrice - shipCost)).toFixed(2) : '-';
+
+      bodyHtml += `
+        <div class="disc-item">
+          <div class="disc-info">
+            <div>状态：<span style="color: ${statusColor}; font-weight: bold;">${disc.status || '在途'}</span></div>
+            <div>买入价：¥${buyPrice}</div>
+            <div>售出价：¥${sellPrice || 0}</div>
+            <div>运费：¥${shipCost || 0}</div>
+            <div>单盘利润：<span style="color: ${profit >= 0 ? '#00b894' : '#d63031'}; font-weight: bold;">${profit !== '-' ? '¥' + profit : '-'}</span></div>
+            <div>售出日期：${disc.sold_date || '未售出'}</div>
+          </div>
+          <div class="disc-actions">
+            <button class="btn-sell" onclick="openSellModal(${disc.id}, ${sellPrice}, ${shipCost}, '${disc.sold_date || ''}')">标记售出</button>
+            <button class="btn-delete"
+        onclick="deleteDisc(${disc.id}, '${gameName}')">
+  删除
+</button>
+          </div>
+        </div>
+      `;
+    });
+  }
+  document.getElementById("modalBody").innerHTML = bodyHtml;
+}
+
+function uploadLocalCover(gameName) {
+  const fileInput = document.getElementById("localCoverFile");
+  if (!fileInput.files || fileInput.files.length === 0) {
+    alert("请先选择一张图片");
+    return;
+  }
+
+  const file = fileInput.files[0];
+  const reader = new FileReader();
+
+  reader.onload = async function(e) {
+    const base64Image = e.target.result;
+
+    await fetch(`${SUPABASE_URL}/rest/v1/games_inventory?game_name=eq.${encodeURIComponent(gameName)}`, {
+      method: "PATCH",
+      headers: { apikey: SUPABASE_KEY, "Content-Type": "application/json" },
+      body: JSON.stringify({ cover_url: base64Image })
+    });
+
+    alert("🎉 自定义相册封面上传成功！");
+    closeModal();
+    loadGames();
+  };
+
+  reader.readAsDataURL(file);
+}
+
+function addStock(gameName) {
+
+  const price =
+    Number(
+      document.getElementById(
+        "newStockPrice"
+      ).value
+    );
+
+  if (!price) {
+    alert("请输入买入价");
+    return;
+  }
+
+  fetch(
+    `${SUPABASE_URL}/rest/v1/games_inventory`,
+    {
+      method: "POST",
+      headers: {
+        apikey: SUPABASE_KEY,
+        "Content-Type":"application/json",
+        Prefer:"return=representation"
+      },
+      body: JSON.stringify({
+        game_name: gameName,
+        purchase_price: price,
+        status: "已入库"
+      })
+    }
+  )
+  .then(res => res.json())
+.then(() => {
+
+  alert("✅ 库存新增成功");
+
+  document.getElementById(
+    "newStockPrice"
+  ).value = "";
+
+  loadGames();
+
+setTimeout(() => {
+
+  fetch(`${SUPABASE_URL}/rest/v1/games_inventory?select=*`, {
+    headers: { apikey: SUPABASE_KEY }
+  })
+  .then(res => res.json())
+  .then(data => {
+
+    rawDiscsData = data || [];
+
+    openGameDetailModal(gameName);
+
+  });
+
+}, 50);
+
+})
+  .catch(err => {
+
+    alert("新增失败");
+
+    console.error(err);
+
+  });
+}
+function closeModal() { document.getElementById("detailModal").style.display = "none"; }
+
+function openSellModal(id, currentSell, currentShip, currentSoldDate) {
+  document.getElementById("sellDiscId").value = id;
+  document.getElementById("sellPriceInput").value = currentSell || "";
+  document.getElementById("shipCostInput").value = currentShip || 0;
+  const todayStr = new Date().toISOString().split('T')[0];
+  document.getElementById("soldDateInput").value = currentSoldDate || todayStr;
+  document.getElementById("sellModal").style.display = "flex";
+}
+
+function closeSellModal() { document.getElementById("sellModal").style.display = "none"; }
+
+function handleSellSubmit(event) {
+  event.preventDefault();
+  const id = document.getElementById("sellDiscId").value;
+  const sellPrice = Number(document.getElementById("sellPriceInput").value);
+const shipCost =
+  Number(
+    document.getElementById(
+      "shipCostInput"
+    ).value || 0
+  );
+  const soldDate = document.getElementById("soldDateInput").value;
+
+  fetch(`${SUPABASE_URL}/rest/v1/games_inventory?id=eq.${id}`, {
+    method: "PATCH",
+    headers: { apikey: SUPABASE_KEY, "Content-Type": "application/json", Prefer: "return=representation" },
+    body: JSON.stringify({ status: "已售出", selling_price: sellPrice, shipping_cost: shipCost, sold_date: soldDate })
+  })
+  .then(res => res.json())
+  .then(() => {
+alert("✅ 售出状态更新成功！");
+
+    closeSellModal();
+
+fetch(`${SUPABASE_URL}/rest/v1/games_inventory?select=*`, {
+  headers: { apikey: SUPABASE_KEY }
+})
+.then(res => res.json())
+.then(data => {
+
+  rawDiscsData = data || [];
+
+  renderDashboardAndList();
+  renderAnalytics();
+
+  openGameDetailModal(currentGameName);
+  })
+  .catch(err => { alert("更新失败"); console.error(err); });
+}
+
+function deleteDisc(id, gameName) {
+
+  if (!confirm("确定要删除这条光盘记录吗？"))
+    return;
+
+  fetch(
+    `${SUPABASE_URL}/rest/v1/games_inventory?id=eq.${id}`,
+    {
+      method: "DELETE",
+      headers: {
+        apikey: SUPABASE_KEY
+      }
+    }
+  )
+  .then(() => {
+
+   alert("删除成功！");
+
+fetch(`${SUPABASE_URL}/rest/v1/games_inventory?select=*`, {
+  headers: { apikey: SUPABASE_KEY }
+})
+.then(res => res.json())
+.then(data => {
+
+  rawDiscsData = data || [];
+
+  renderDashboardAndList();
+  renderAnalytics();
+
+  openGameDetailModal(gameName);
+
+  })
+  .catch(err => {
+
+    alert("删除失败");
+
+    console.error(err);
+
+  });
+}
+function sortGamesBy(type, btnElement) {
+
+  currentSort = type;
+
+  document
+    .querySelectorAll(".sort-btn")
+    .forEach(btn =>
+      btn.classList.remove("active")
+    );
+
+  btnElement.classList.add("active");
+
+  renderDashboardAndList();
+}
+function switchTab(type, btnElement) {
+  currentFilter = type;
+  document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+  btnElement.classList.add('active');
+  renderDashboardAndList();
+}
+function showCurrentMonth() {
+  const now = new Date();
+  analyticsStartDate =
+    `${now.getFullYear()}-${
+      String(now.getMonth() + 1).padStart(2,'0')
+    }-01`;
+  analyticsEndDate =
+    `${now.getFullYear()}-${
+      String(now.getMonth() + 1).padStart(2,'0')
+    }-${
+      String(now.getDate()).padStart(2,'0')
+    }`;
+  document.getElementById("customStartDate").value =
+    analyticsStartDate;
+  document.getElementById("customEndDate").value =
+    analyticsEndDate;
+  renderAnalytics();
+}
+function showCurrentYear() {
+
+  const now = new Date();
+
+  analyticsStartDate =
+    now.getFullYear() + "-01-01";
+
+  analyticsEndDate =
+    now.toISOString().split("T")[0];
+
+  document.getElementById(
+    "customStartDate"
+  ).value = analyticsStartDate;
+
+  document.getElementById(
+    "customEndDate"
+  ).value = analyticsEndDate;
+
+  renderAnalytics();
+
+}
+function showAllData() {
+
+  analyticsStartDate = null;
+  analyticsEndDate = null;
+
+  document.getElementById(
+    "customStartDate"
+  ).value = "";
+
+  document.getElementById(
+    "customEndDate"
+  ).value = "";
+
+  renderAnalytics();
+}
+loadGames();
+
+  </script>
+</body>
+</html>
