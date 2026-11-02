@@ -1230,34 +1230,37 @@ ${historicalDisc.total_copies}张
           <img class="cover" src="${coverUrl}" alt="封面">
 <div class="details">
   <h2>${g.game_name}</h2>
-  <div class="profit-box">
-    <span class="profit-label">
-      总利润
+
+<div class="profit-box">
+
+  <div class="total-qty">
+    总数量
+    <span class="qty-value">
+      ${g.total_qty + g.sold_qty}张
     </span>
-    <span
-      class="profit-text"
-      style="color:${profitColor};">
+  </div>
+
+  <div class="total-qty">
+    平均收益
+    <span class="qty-value"
+          style="color:${
+            avgProfit >= 0
+              ? '#00b894'
+              : '#d63031'
+          };">
+      ¥${formatMoney(avgProfit)}
+    </span>
+  </div>
+
+  <div class="total-qty">
+    总利润
+    <span class="qty-value"
+          style="color:${profitColor};">
       ¥${formatMoney(g.total_profit)}
     </span>
-    <div class="total-qty">
-      总数量
-  <span class="qty-value">
-    ${g.total_qty + g.sold_qty}张
-  </span>
-    </div>
-
-<div class="total-qty">
-  平均收益
-  <span class="qty-value"
-       style="color:${
-  avgProfit >= 0
-    ? '#00b894'
-    : '#d63031'
-};">
-    ¥${formatMoney(avgProfit)}
-  </span>
-</div>
   </div>
+
+</div>
 </div>
         </div>
         <div class="card-right">
