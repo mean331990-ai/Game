@@ -29,7 +29,10 @@ h1 {
   margin: 18px 0 12px 0;
   color: #2d3436;
 }
-
+.btn-edit{
+  background:#0984e3;
+  color:white;
+}	
 #summary {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -472,6 +475,13 @@ h1 {
   border-radius: 8px;
 }
 
+.form-group select {
+  padding: 10px;
+  border: 1px solid #dfe6e9;
+  border-radius: 8px;
+  background: white;
+}
+
 .form-actions {
   display: flex;
   justify-content: flex-end;
@@ -780,6 +790,7 @@ h1 {
      class="modal-overlay"
      style="display:none;">
 
+
   <div class="modal-content sell-modal-content">
 
     <div class="modal-header">
@@ -853,7 +864,112 @@ h1 {
 </div>
 
 
+<div id="editModal"
+     class="modal-overlay"
+     style="display:none;">
 
+  <div class="modal-content sell-modal-content">
+
+    <div class="modal-header">
+      <h2>📝 修改记录</h2>
+
+      <button class="close-btn"
+              onclick="closeEditModal()">
+        ×
+      </button>
+    </div>
+
+    <div class="modal-body">
+
+      <form
+        id="editForm"
+        onsubmit="handleEditSubmit(event)">
+
+        <input
+          type="hidden"
+          id="editDiscId">
+
+        <div class="form-group">
+          <label>买入价</label>
+          <input
+            type="number"
+            id="editBuyPrice"
+            step="0.01"
+            required>
+        </div>
+
+        <div class="form-group">
+          <label>卖出价</label>
+          <input
+            type="number"
+            id="editSellPrice"
+            step="0.01">
+        </div>
+
+        <div class="form-group">
+          <label>运费</label>
+          <input
+            type="number"
+            id="editShipCost"
+            step="0.01">
+        </div>
+
+        <div class="form-group">
+          <label>售出日期</label>
+          <input
+            type="date"
+            id="editSoldDate">
+        </div>
+
+        <div class="form-group">
+          <label>状态</label>
+
+          <select id="editStatus">
+
+            <option value="已入库">
+              已入库
+            </option>
+
+            <option value="运输中">
+              运输中
+            </option>
+
+            <option value="已售出">
+              已售出
+            </option>
+
+          </select>
+
+        </div>
+
+        <div class="form-actions">
+
+          <button
+            type="button"
+            class="btn-cancel"
+            onclick="closeEditModal()">
+
+            取消
+
+          </button>
+
+          <button
+            type="submit"
+            class="btn-submit">
+
+            保存
+
+          </button>
+
+        </div>
+
+      </form>
+
+    </div>
+
+  </div>
+
+</div>
 
 
 
@@ -1333,6 +1449,155 @@ function toggleAnalytics() {
   panel.style.display = panel.style.display === "none" ? "block" : "none";
 }
 
+
+function openEditModal(id){
+
+  const disc =
+    rawDiscsData.find(
+      x => x.id === id
+    );
+
+  if(!disc) return;
+
+  document.getElementById(
+    "editDiscId"
+  ).value = disc.id;
+
+  document.getElementById(
+    "editBuyPrice"
+  ).value =
+    disc.purchase_price || 0;
+
+  document.getElementById(
+    "editSellPrice"
+  ).value =
+    disc.selling_price || "";
+
+  document.getElementById(
+    "editShipCost"
+  ).value =
+    disc.shipping_cost || "";
+
+  document.getElementById(
+    "editSoldDate"
+  ).value =
+    disc.sold_date || "";
+
+  document.getElementById(
+    "editStatus"
+  ).value =
+    disc.status || "已入库";
+
+  document.getElementById(
+    "editModal"
+  ).style.display = "flex";
+}
+
+function closeEditModal(){
+
+  document.getElementById(
+    "editModal"
+  ).style.display = "none";
+
+}
+function handleEditSubmit(event){
+
+  event.preventDefault();
+
+  const id =
+    document.getElementById(
+      "editDiscId"
+    ).value;
+const status =
+  document.getElementById(
+    "editStatus"
+  ).value;
+  fetch(
+    `${SUPABASE_URL}/rest/v1/games_inventory?id=eq.${id}`,
+    {
+      method:"PATCH",
+
+      headers:{
+        apikey:SUPABASE_KEY,
+        "Content-Type":"application/json"
+      },
+
+body:JSON.stringify({
+
+  purchase_price:Number(
+    document.getElementById(
+      "editBuyPrice"
+    ).value
+  ),
+
+  status: status,
+
+  selling_price:
+    status === "已售出"
+      ? Number(
+          document.getElementById(
+            "editSellPrice"
+          ).value || 0
+        )
+      : null,
+
+  shipping_cost:
+    status === "已售出"
+      ? Number(
+          document.getElementById(
+            "editShipCost"
+          ).value || 0
+        )
+      : null,
+
+  sold_date:
+    status === "已售出"
+      ? document.getElementById(
+          "editSoldDate"
+        ).value
+      : null
+
+})
+
+    }
+  )
+
+  .then(() => {
+
+    alert("✅ 修改成功");
+
+    closeEditModal();
+
+    fetch(
+      `${SUPABASE_URL}/rest/v1/games_inventory?select=*`,
+      {
+        headers:{
+          apikey:SUPABASE_KEY
+        }
+      }
+    )
+    .then(res => res.json())
+    .then(data => {
+
+      rawDiscsData = data || [];
+
+      renderDashboardAndList();
+
+      renderAnalytics();
+
+      openGameDetailModal(
+        currentGameName
+      );
+
+    });
+
+  });
+
+}
+
+
+
+
 function switchTimeDimension(dim, btnElement) {
   currentTimeDimension = dim;
   document.querySelectorAll('.time-btn').forEach(btn => btn.classList.remove('active'));
@@ -1610,13 +1875,29 @@ height:34px;
             <div>单盘利润：<span style="color: ${profit >= 0 ? '#00b894' : '#d63031'}; font-weight: bold;">${profit !== '-' ? '¥' + profit : '-'}</span></div>
             <div>售出日期：${disc.sold_date || '未售出'}</div>
           </div>
-          <div class="disc-actions">
-            <button class="btn-sell" onclick="openSellModal(${disc.id}, ${sellPrice}, ${shipCost}, '${disc.sold_date || ''}')">标记售出</button>
-            <button class="btn-delete"
-        onclick="deleteDisc(${disc.id}, '${gameName}')">
-  删除
+<div class="disc-actions">
+
+<button class="btn-sell"
+        onclick="openSellModal(
+          ${disc.id},
+          ${sellPrice},
+          ${shipCost},
+          '${disc.sold_date || ""}'
+        )">
+  标记售出
 </button>
-          </div>
+
+  <button class="btn-edit"
+          onclick="openEditModal(${disc.id})">
+    修改记录
+  </button>
+
+  <button class="btn-delete"
+          onclick="deleteDisc(${disc.id}, '${gameName}')">
+    删除
+  </button>
+
+</div>
         </div>
       `;
     });
