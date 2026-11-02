@@ -1198,7 +1198,7 @@ ${historicalDisc.total_copies}张
 </div>
 
 <div class="total-qty">
-  平均利润
+  均利润
   <span class="qty-value"
         style="color:#00b894;">
     ¥${formatMoney(avgProfit)}
@@ -1240,15 +1240,9 @@ ${historicalDisc.total_copies}张
     </span>
   </div>
 
+
   <div class="total-qty">
-    总利润
-    <span class="qty-value"
-          style="color:${profitColor};">
-      ¥${formatMoney(g.total_profit)}
-    </span>
-  </div>
-  <div class="total-qty">
-    平均利润
+    均利润
     <span class="qty-value"
           style="color:${
             avgProfit >= 0
@@ -1259,7 +1253,13 @@ ${historicalDisc.total_copies}张
     </span>
   </div>
 
-
+  <div class="total-qty">
+    总利润
+    <span class="qty-value"
+          style="color:${profitColor};">
+      ¥${formatMoney(g.total_profit)}
+    </span>
+  </div>
 
 </div>
 </div>
