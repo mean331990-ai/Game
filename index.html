@@ -1135,6 +1135,18 @@ ${historicalDisc.total_copies}张
     ${g.total_qty + g.sold_qty}张
   </span>
     </div>
+
+<div class="total-qty">
+  平均收益
+  <span class="qty-value"
+       style="color:${
+  avgProfit >= 0
+    ? '#00b894'
+    : '#d63031'
+};">
+    ¥${formatMoney(avgProfit)}
+  </span>
+</div>
   </div>
 </div>
         </div>
