@@ -1053,6 +1053,10 @@ const isHistorical =
     ? g.cover_url
 : "";
     const avgCost = g.total_qty > 0 ? Math.round(g.total_cost / g.total_qty) : 0;
+const avgProfit =
+  g.sold_qty > 0
+    ? g.total_profit / g.sold_qty
+    : 0;
 if (isHistorical) {
 html += `
   <div class="card" onclick="openGameDetailModal('${g.game_name}')">
@@ -1075,6 +1079,21 @@ html += `
 ${historicalDisc.total_copies}张
   </span>
           </div>
+
+<div class="total-qty">
+  总数量
+  <span class="qty-value">
+    ${g.total_qty + g.sold_qty}张
+  </span>
+</div>
+
+<div class="total-qty">
+  平均收益
+  <span class="qty-value"
+        style="color:#00b894;">
+    ¥${formatMoney(avgProfit)}
+  </span>
+</div>
         </div>
       </div>
     </div>
