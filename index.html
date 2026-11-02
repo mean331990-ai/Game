@@ -1023,7 +1023,7 @@ function renderDashboardAndList() {
         cover_url: disc.cover_url || "",
         total_qty: 0,
         sold_qty: 0,
-        transit_qty: 0,
+ 
         stock_qty: 0,
         total_profit: 0,
         total_cost: 0,
@@ -1045,10 +1045,7 @@ function renderDashboardAndList() {
     } else {
   g.total_qty += 1;
   g.total_cost += buyPrice;
-  if (disc.status === "运输中") {
-    g.transit_qty += 1;
-  } else {
-    g.stock_qty += 1;
+      g.stock_qty += 1;
   }
 }
     
@@ -1865,7 +1862,7 @@ height:34px;
       bodyHtml += `
         <div class="disc-item">
           <div class="disc-info">
-            <div>状态：<span style="color: ${statusColor}; font-weight: bold;">${disc.status || '在途'}</span></div>
+            <div>状态：<span style="color: ${statusColor}; font-weight: bold;">${disc.status || '已入库'}</span></div>
             <div>买入价：¥${buyPrice}</div>
             <div>售出价：¥${sellPrice || 0}</div>
             <div>运费：¥${shipCost || 0}</div>
